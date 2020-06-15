@@ -15,17 +15,17 @@ public class Load {
 
     public static void main(String[] args) throws Exception {
 
-        // File in = new File("res\\bandit_0_mirror.bmp");
-        // BufferedImage source = ImageIO.read(in);
+        File in = new File("res\\bandit_0_mirror.bmp");
+        BufferedImage source = ImageIO.read(in);
 
-        // int color = source.getRGB(0, 0);
+        int color = source.getRGB(0, 0);
 
-        // Image image = makeColorTransparent(source, new Color(color));
+        Image image = makeColorTransparent(source, new Color(color));
 
-        // BufferedImage transparent = imageToBufferedImage(image);
+        BufferedImage transparent = imageToBufferedImage(image);
 
-        // File out = new File("res\\bandit_0_mirror.png");
-        // ImageIO.write(transparent, "PNG", out);
+        File out = new File("res\\bandit_0_mirror.png");
+        ImageIO.write(transparent, "PNG", out);
     }
 
     private static BufferedImage imageToBufferedImage(Image image) {

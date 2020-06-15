@@ -2,55 +2,54 @@ package luigi.littleFighter;
 
 import luigi.engine.Input;
 
-public class Robot extends Anime{
+import java.awt.event.KeyEvent;
+
+
+public class Robot extends Sprite{
 
     private Input input;
 
-    private float xVel = 0;
-    private float yVel = 0;
+    private StateA[] states;
 
-    private final float XSPEED = 2;
-    private final float YSPEED = 2;
+    private StateA state;
 
-    private final float WALKSPEED = 2;
-
-    public Robot(String imagePath, String mirrorPath) {
-        super(imagePath, mirrorPath);
+    
+    public Robot(Input input) {
+        super("res\\bandit.png", "res\\bandit_0_mirror.png");
+        this.input = input;
+        StateA[] tempS = {
+            new StateIdle(this),
+            new StateWalk(this),
+            new StateJump(this),
+            new StatePunch(this),
+            new StateDash(this)
+        };
+        states = tempS;
+        changeState(StateIdle.id);
     }
-
-
+    
+    
     public void update(){
-        super.update();
-        if(xVel>.1||xVel<-.1||yVel>.1||yVel<-.1){
-            float hyp = hypotenuse(xVel, yVel);
-            xVel /= hyp;
-            yVel /= hyp;
-    
-            xPos+=xVel*WALKSPEED;
-            yPos+=yVel*WALKSPEED;
-        }
 
-        if(xPos>720){
-            xPos = -60;
-        }
+        //update sprite tile index for rendering
+        super.index = state.getSpriteIndex();
 
-    }
-
-    public void moveX(int vX){
-        xVel = vX;
-        if(vX>0){
-            faceRight();
-        }else if(vX<0){
-            faceLeft();
-        }
-    }
-
-    public void moveY(int vY){
-        yVel = vY;
-    }
-
-    private float hypotenuse(float x, float y){
-        return (float)Math.sqrt((x*x+y*y));
+        //update everything else
+        state.update();
+        
     }
     
+    public void changeState(int stateCode){
+        state = states[stateCode];
+        state.onEntry();
+    }
+    
+    public StateA getState(){
+        return state;
+    }
+
+    public Input getInput(){
+        return input;
+    }
+
 }

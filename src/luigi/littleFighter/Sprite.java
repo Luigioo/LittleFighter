@@ -62,5 +62,19 @@ public class Sprite {
     public void faceLeft(){
         isMirror = true;
     }
+    
+    public float getXPos(){
+        return xPos;
+    }
+    public float getYPos(){
+        return yPos;
+    }
+
+    public void setXPos(float newXPos){
+        xPos = newXPos;
+    }
+    public void setYPos(float newYPos){
+        yPos = newYPos;
+    }
 
 }
