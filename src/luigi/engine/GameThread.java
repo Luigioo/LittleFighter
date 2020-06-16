@@ -1,5 +1,6 @@
 package luigi.engine;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.*;
 
@@ -13,17 +14,19 @@ public class GameThread extends JPanel implements Runnable{
     private float frameCap = 1.0f/60.0f;
     private float SECOND = 1000000000.0f;
 
-    public GameThread(AbGame ab){
+    public GameThread(AbGame ab, int wid, int hig){
         abGame = ab;
 		thread = new Thread(this);
 		input = new Input(this);
+		this.setPreferredSize(new Dimension(wid,hig));
 		this.setFocusable(true);
 		this.requestFocusInWindow();
 	}
-	public GameThread(AbGame ab, int wid, int hig){
-		this(ab);
-		frame = new JFrame("");
+	public GameThread(AbGame ab, int wid, int hig, JFrame fm){
+		this(ab,wid,hig);
+		frame = fm;
 		frame.add(this);
+		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(wid, hig);
 		frame.setLocationRelativeTo(null);
@@ -37,9 +40,10 @@ public class GameThread extends JPanel implements Runnable{
 	}
 
     public void start(){
-		frame.setVisible(true);
+		if(frame!=null){
+			frame.setVisible(true);
+		}
 		thread.start();
-		System.out.println("still alive");
     }
 
     
@@ -113,7 +117,11 @@ public class GameThread extends JPanel implements Runnable{
 	}
 	
 	public void setName(String newName){
-		frame.setTitle(newName);
+		if(frame!=null){
+			frame.setTitle(newName);
+		}else{
+			System.out.println("no frame");
+		}
 	}
     
 }

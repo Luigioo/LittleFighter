@@ -7,7 +7,8 @@ public class StateDash extends StateA{
     
     public static final int id = 4;
 
-    private final float DASHSPEED = 10;
+    private final float DASHSPEED = 4f;
+    private final float MAXACCEL = 0.4f;
     
     private float dashx;
     private float dashy;
@@ -21,28 +22,32 @@ public class StateDash extends StateA{
     public void init() {
         index0 = 67;
         index1 = 70;
-        length = 12;
+        length = 20;
     }
 
 
     @Override
     public void update(){
-        super.update();
+        //count frames 
+        frameCount++;
+        if(frameCount>=length){
+            robot.changeState(StateIdle.id);
+            return;
+        }
 
         //update robot state
         if(exitFlag){
             robot.changeState(StateIdle.id);
+            return;
         }
 
         //update positions
-        float hyp = hypotenuse(dashx, dashy);
-        dashx /= hyp;
-        dashy /= hyp;
-            
-        robot.setXPos(robot.getXPos()+xdir*DASHSPEED);
-        robot.setYPos(robot.getYPos()+ydir*DASHSPEED);
+        steer(dashx,dashy,DASHSPEED,MAXACCEL);
+        updatePos();
+    }
 
-
+    public int getSpriteIndex(){
+        return (int)map(frameCount, 0, length, index0, index1);
     }
 
     @Override
@@ -50,6 +55,7 @@ public class StateDash extends StateA{
         super.onEntry();
 
         //determine dash direction
+        updateDir();
         if(xdir>.1||xdir<-.1||ydir>.1||ydir<-.1){
             dashx = xdir;
             dashy = ydir;
@@ -63,7 +69,4 @@ public class StateDash extends StateA{
         }
     }
 
-    private float hypotenuse(float x, float y){
-        return (float)Math.sqrt((x*x+y*y));
-    }
 }

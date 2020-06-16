@@ -1,12 +1,13 @@
 package luigi.engine;
 
 import java.awt.Graphics;
+import javax.swing.*;
 
 public abstract class AbGame {
 
     protected Input input;
 
-    private GameThread gameThread;
+    protected GameThread gameThread;
 
     public AbGame(){
         init();
@@ -21,15 +22,14 @@ public abstract class AbGame {
         gameThread.setName(newName);
     }
 
-    private void init(){
+    public void init(){
         if(gameThread == null){
-            gameThread = new GameThread(this,720,480);
+            gameThread = new GameThread(this,720,480, new JFrame(""));
             input = gameThread.getInput();
         }
     }
 
     public void start(){
-        System.out.println("start game");
         gameThread.start();
     }
 
