@@ -1,6 +1,9 @@
 package luigi.littleFighter;
 
-//import java.awt.event.KeyEvent;
+import java.awt.event.KeyEvent;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.*;
 
 public class StateDash extends StateA{
 
@@ -20,25 +23,24 @@ public class StateDash extends StateA{
 
     @Override
     public void init() {
-        index0 = 67;
-        index1 = 70;
-        length = 20;
+        gapFrames = 10;
+        frameCount = gapFrames;
+        sprites = loadSpriteID("dash");
     }
 
 
     @Override
     public void update(){
         //count frames 
-        frameCount++;
-        if(frameCount>=length){
-            robot.changeState(StateIdle.id);
-            return;
-        }
-
-        //update robot state
-        if(exitFlag){
-            robot.changeState(StateIdle.id);
-            return;
+        frameCount--;
+        if(frameCount<=0){
+            frameCount = gapFrames;
+            spriteIndex++;
+            spriteIndex%=sprites.length;
+            if(spriteIndex==0){
+                robot.changeState(StateIdle.id);
+                return;
+            }
         }
 
         //update positions
@@ -46,8 +48,14 @@ public class StateDash extends StateA{
         updatePos();
     }
 
-    public int getSpriteIndex(){
-        return (int)map(frameCount, 0, length, index0, index1);
+    @Override
+    public void render(Graphics g) {
+        BufferedImage image = sprites[spriteIndex];
+        if(robot.isMirror){
+            g.drawImage(image, (int)pos[0]+image.getHeight(), (int)pos[1], image.getWidth(), -image.getHeight(), null);
+        }else{
+            g.drawImage(image, (int)pos[0],(int)pos[1],image.getWidth(),image.getHeight(),null);
+        }
     }
 
     @Override
@@ -56,9 +64,9 @@ public class StateDash extends StateA{
 
         //determine dash direction
         updateDir();
-        if(xdir>.1||xdir<-.1||ydir>.1||ydir<-.1){
-            dashx = xdir;
-            dashy = ydir;
+        if(dir[0]>.1||dir[0]<-.1||dir[1]>.1||dir[1]<-.1){
+            dashx = dir[0];
+            dashy = dir[1];
         }else{
             dashy = 0;
             if(robot.isMirror){

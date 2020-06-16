@@ -1,14 +1,15 @@
 package luigi.littleFighter;
 
 import java.awt.event.KeyEvent;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.*;
 
 public class StateIdle extends StateA{
 
     public static final int id = 0;
     
-    
-
-    private final float friction = .98f;
+    private final float friction = .6f;
 
     public StateIdle(Robot robot) {
         super(robot);
@@ -16,14 +17,18 @@ public class StateIdle extends StateA{
 
     @Override
     public void init() {
-        index0 = 0;
-        index1 = 4;
-        length = 15;
+        gapFrames=10;
+        frameCount=gapFrames;
+        sprites = loadSpriteID("idle");
     }
 
     @Override
     public void update(){
-        super.update();
+        
+        updateSprite();
+        
+        updateDir();
+
         //update robot state
         if(input.keyPressed(KeyEvent.VK_K)){
             robot.changeState(StateDash.id);
@@ -34,7 +39,7 @@ public class StateIdle extends StateA{
             return;
         }
         
-        if(!(xdir==0&&ydir==0)){
+        if(!(dir[0]==0&&dir[1]==0)){
             robot.changeState(StateWalk.id);
             return;
         }
@@ -44,8 +49,13 @@ public class StateIdle extends StateA{
         
     }
 
-    public String fileName(){
-        return "idle";
+    public void render(Graphics g){
+        BufferedImage image = sprites[spriteIndex];
+        if(robot.isMirror){
+            g.drawImage(image, (int)pos[0]+image.getHeight(), (int)pos[1], image.getWidth(), -image.getHeight(), null);
+        }else{
+            g.drawImage(image, (int)pos[0],(int)pos[1],image.getWidth(),image.getHeight(),null);
+        }
     }
 
 }

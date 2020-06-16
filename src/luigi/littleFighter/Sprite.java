@@ -9,8 +9,8 @@ import java.io.InputStreamReader;
 import java.awt.image.*;
 import java.net.URL;
 import javax.imageio.ImageIO;
-
 import java.awt.Graphics;
+
 
 public class Sprite {
 
@@ -46,7 +46,7 @@ public class Sprite {
     }
 
     public Sprite(String folder){
-        this.spriteNames = getResourceFiles("res/bandit");
+        this.spriteNames = getResourceFiles(folder);
 
         for(String s:spriteNames){
             System.out.println(s);
@@ -88,17 +88,6 @@ public class Sprite {
 
     }
 
-    public void faceRight(){
-        isMirror = false;
-    }
-    public void faceLeft(){
-        isMirror = true;
-    }
-    
-    public float[] getPos(){
-        return pos;
-    }
-
     private String[] getResourceFiles(String path){
         List<String> filenames = new ArrayList<String>();
     
@@ -114,9 +103,7 @@ public class Sprite {
 
             sprites = new BufferedImage[filenames.size()];
             for(int i=filenames.size()-1;i>=0;i--){
-                sprites[i]=ImageIO.read(new File(path+filenames.get(i)));
-
-                System.out.println(filenames.get(i));
+                sprites[i]=ImageIO.read(new File(path+"/"+filenames.get(i)));
             }
         }catch(Exception e){System.out.println("exception");};
 
@@ -132,6 +119,14 @@ public class Sprite {
     
     private ClassLoader getContextClassLoader() {
         return Thread.currentThread().getContextClassLoader();
+    }
+
+    //getters & setters
+    public BufferedImage[] getSprites(){
+        return sprites;
+    }
+    public String[] getSpriteNames(){
+        return spriteNames;
     }
 
 }
