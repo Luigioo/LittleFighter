@@ -10,6 +10,7 @@ public class StateIdle extends StateA{
     public static final int id = 0;
     
     private final float friction = .6f;
+    private final int CLICKLIMIT = 15;
 
     public StateIdle(Robot robot) {
         super(robot);
@@ -18,7 +19,7 @@ public class StateIdle extends StateA{
     @Override
     public void init() {
         gapFrames=10;
-        frameCount=gapFrames;
+        frameCount=0;
         sprites = loadSpriteID("idle");
     }
 
@@ -29,7 +30,10 @@ public class StateIdle extends StateA{
         
         updateDir();
 
+        steer(0,0,100,0.5f);
+
         //update robot state
+
         if(input.keyPressed(KeyEvent.VK_K)){
             robot.changeState(StateDash.id);
             return;
@@ -39,12 +43,18 @@ public class StateIdle extends StateA{
             return;
         }
         
-        if(!(dir[0]==0&&dir[1]==0)){
+        int gap = input.getGap(KeyEvent.VK_D);
+        int gapA = input.getGap(KeyEvent.VK_A);
+        if(gap>0&&gap<CLICKLIMIT||gapA>0&&gapA<CLICKLIMIT){
+            robot.changeState(StateRun.id);
+            return;
+        }
+
+        if(!(isO(dir[0])&&isO(dir[1]))){
             robot.changeState(StateWalk.id);
             return;
         }
         
-        friction(friction);
         updatePos();
         
     }
@@ -52,10 +62,13 @@ public class StateIdle extends StateA{
     public void render(Graphics g){
         BufferedImage image = sprites[spriteIndex];
         if(robot.isMirror){
-            g.drawImage(image, (int)pos[0]+image.getHeight(), (int)pos[1], image.getWidth(), -image.getHeight(), null);
+            g.drawImage(image, (int)pos[0]+image.getWidth(), (int)pos[1], -image.getWidth(), image.getHeight(), null);
         }else{
             g.drawImage(image, (int)pos[0],(int)pos[1],image.getWidth(),image.getHeight(),null);
         }
     }
 
+    public int id(){
+        return id;
+    }
 }

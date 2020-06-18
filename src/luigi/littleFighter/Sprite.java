@@ -65,27 +65,16 @@ public class Sprite {
         //     System.out.println("exception");
         // }
     }
-
-    public void render(Graphics g){
-        if(!isMirror){
-            int row = index/10;
-            int col = index%10;
-            int x1 = col*(int)width, x2 = (col+1)*(int)width;
-            int y1 = row*(int)height, y2 = (row+1)*(int)width;
-            g.drawImage(image, 
-                (int)pos[0], (int)pos[1], (int)(pos[0]+width), (int)(pos[1]+height),
-                x1, y1, x2, y2, null);
-        }else{
-            int row = index/10;
-            int col = 9-index%10;
-            int x1 = col*(int)width, x2 = (col+1)*(int)width;
-            int y1 = row*(int)height, y2 = (row+1)*(int)width;
-            g.drawImage(mirror, 
-                (int)pos[0], (int)pos[1], (int)(pos[0]+width), (int)(pos[1]+height),
-                x1, y1, x2, y2, null);
+    public BufferedImage[] loadSpriteID(String targetName){
+        BufferedImage[] sps = getSprites();
+        String[] names = getSpriteNames();
+        List<BufferedImage> targets = new ArrayList<BufferedImage>();
+        for(int i=0;i<names.length;i++){
+            if(names[i].contains(targetName)){
+                targets.add(sps[i]);
+            }
         }
-
-
+        return targets.toArray(new BufferedImage[0]);
     }
 
     private String[] getResourceFiles(String path){

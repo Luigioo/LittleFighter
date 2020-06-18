@@ -11,6 +11,11 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener{
     private boolean[] curKeys = new boolean[256];
     private boolean[] lasKeys = new boolean[256];
 
+    private int frameCount = 0;
+    private int[] curPressedFrame = new int[256];
+    private int[] lastPressedFrame = new int[256];
+    // so...every key is recorded as pressed once at the beginning of the game??
+
     public Input(GameThread gt){
         gt.addKeyListener(this);
         gt.addMouseListener(this);
@@ -18,6 +23,8 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener{
     }
 
     public void update(){
+        frameCount++;
+        lastPressedFrame = curPressedFrame.clone();
         lasKeys = curKeys.clone();
     }
 
@@ -31,6 +38,14 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener{
 
     public boolean getKey(int keyCode){
         return curKeys[keyCode];
+    }
+
+    public int getGap(int keyCode){
+        return curPressedFrame[keyCode]-lastPressedFrame[keyCode];
+    }
+
+    public int getFrame(){
+        return frameCount;
     }
 
 
@@ -84,7 +99,7 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener{
 
     @Override
     public void keyPressed(KeyEvent e) {
-        //System.out.println("keypressed");
+        curPressedFrame[e.getKeyCode()]= frameCount;
         curKeys[e.getKeyCode()] = true;
     }
 

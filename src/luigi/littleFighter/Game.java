@@ -14,6 +14,7 @@ public class Game extends AbGame {
     private ArrayList<Runnable> todos;
     
     private Robot hero;
+    private ArrayList<Enemy> enemies;
 
     private AdjustPanel ap;
 
@@ -23,8 +24,13 @@ public class Game extends AbGame {
         todos = new ArrayList<Runnable>();
         ap = new AdjustPanel(this);
         ap.createGUI();
-        hero = new Robot(input);
-        
+        hero = new Robot(this);
+        enemies = new ArrayList<Enemy>();
+        enemies.add(new Enemy(this));
+        enemies.get(0).test1();
+        enemies.get(0).test();
+        enemies.add(new Enemy(this));
+        enemies.get(1).test();
     }
 
     @Override
@@ -41,12 +47,17 @@ public class Game extends AbGame {
 
     @Override
     public void render(Graphics g) {
+        ImageIcon bg = new ImageIcon("res/backgrounds/bg_thv.png");
+        g.drawImage(bg.getImage(),0,0,null);
         hero.render(g);
-
     }
 
     public void addTask(Runnable r){
         todos.add(r);
+    }
+
+    public Robot getHero(){
+        return hero;
     }
 
     public static void main(String args[]){

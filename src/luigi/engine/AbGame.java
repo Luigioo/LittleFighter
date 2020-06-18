@@ -13,15 +13,7 @@ public abstract class AbGame {
         init();
         setup();
     }
-
-    public abstract void setup();
-    public abstract void update();
-    public abstract void render(Graphics g);
-
-    public void setName(String newName){
-        gameThread.setName(newName);
-    }
-
+    
     public void init(){
         if(gameThread == null){
             gameThread = new GameThread(this,720,480, new JFrame(""));
@@ -29,8 +21,19 @@ public abstract class AbGame {
         }
     }
 
-    public void start(){
-        gameThread.start();
+    public abstract void setup();
+    public abstract void update();
+    public abstract void render(Graphics g);
+    
+        public void start(){
+            gameThread.start();
+        }
+
+    public void setName(String newName){
+        gameThread.setName(newName);
     }
 
+    public Input getInput(){
+        return input;
+    }
 }

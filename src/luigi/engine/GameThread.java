@@ -12,7 +12,9 @@ public class GameThread extends JPanel implements Runnable{
 	private JFrame frame;
     private Thread thread;
     private float frameCap = 1.0f/60.0f;
-    private float SECOND = 1000000000.0f;
+	private float SECOND = 1000000000.0f;
+	
+	private int frameCount = 0;
 
     public GameThread(AbGame ab, int wid, int hig){
         abGame = ab;
@@ -74,7 +76,8 @@ public class GameThread extends JPanel implements Runnable{
 				render = true;
 				unprocessedTime -= frameCap;
 				
-                //update
+				//update
+				frameCount++;
                 abGame.update();
 				input.update();
                 //print fps
@@ -122,6 +125,10 @@ public class GameThread extends JPanel implements Runnable{
 		}else{
 			System.out.println("no frame");
 		}
+	}
+
+	public int getFrameCount(){
+		return frameCount;
 	}
     
 }

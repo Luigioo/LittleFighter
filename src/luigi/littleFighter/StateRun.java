@@ -1,3 +1,4 @@
+
 package luigi.littleFighter;
 
 import java.awt.event.KeyEvent;
@@ -5,14 +6,17 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.*;
 
-public class StateWalk extends StateA {
 
-    public static final int id = 1;
+public class StateRun extends StateA {
 
-    private final float WALKSPEED = 2;
+    public static final int id = 5;
+
+    private final float RUNSPEED = 4;
     private final float MAXACCEL = 0.34f;
 
-    public StateWalk(Robot robot) {
+    private float dirX = 0;
+
+    public StateRun(Robot robot) {
         super(robot);
     }
 
@@ -20,7 +24,7 @@ public class StateWalk extends StateA {
     public void init() {
         gapFrames = 10;
         frameCount = 0;
-        sprites = loadSpriteID("walk");
+        sprites = loadSpriteID("run");
     }
 
     @Override
@@ -28,32 +32,19 @@ public class StateWalk extends StateA {
         updateSprite();
         updateDir();
 
-        // update robot state
-        if (input.keyPressed(KeyEvent.VK_K)) {
+        //update robot state
+        if(dir[0]==0){
+            robot.changeState(StateIdle.id);
+            return;
+        }
+        if(input.keyPressed(KeyEvent.VK_K)){
             robot.changeState(StateDash.id);
             return;
         }
 
-        if (input.keyPressed(KeyEvent.VK_J)) {
-            robot.changeState(StatePunch.id);
-            return;
-        }
-        if (dir[0] == 0) {
-            if (dir[1] == 0) {
-                robot.changeState(StateIdle.id);
-                return;
-            }
-        }
-
-        // face left/right
-        if (dir[0] > .1) {
-            robot.faceRight();
-        } else if (dir[0] < -.1) {
-            robot.faceLeft();
-        }
 
         // update positions
-        steer(dir[0], dir[1], WALKSPEED, MAXACCEL);
+        steer(dirX*2, dir[1], RUNSPEED, MAXACCEL);
         updatePos();
     }
 
@@ -67,8 +58,23 @@ public class StateWalk extends StateA {
         }
     }
 
-    public int id(){
-        return id;
+    @Override
+    public void onEntry() {
+        super.onEntry();
+        //record run direction
+        dirX = 0;
+        if(dir[0]<0){
+            dirX = -1;
+            robot.faceLeft();
+        }else if(dir[0]>0){
+            dirX = 1;
+            robot.faceRight();
+        }
     }
 
+    @Override
+    public int id() {
+        return id;
+    }
+    
 }

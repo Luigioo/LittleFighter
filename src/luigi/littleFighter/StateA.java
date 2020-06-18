@@ -11,7 +11,7 @@ import java.awt.image.*;
 public abstract class StateA {
 
     protected int gapFrames = 10;
-    protected int frameCount = gapFrames;
+    protected int frameCount = 0;
     protected int spriteIndex = 0;
 
     protected Robot robot;
@@ -19,8 +19,11 @@ public abstract class StateA {
     protected float[] pos;
     protected float[] vel;
     protected float[] dir;
+    protected ArrayList<StateA> history;
     
     protected BufferedImage[] sprites;
+
+
 
     public StateA(Robot robot){
         this.robot = robot;
@@ -28,22 +31,23 @@ public abstract class StateA {
         this.pos = robot.getPos();
         this.vel = robot.getVel();
         this.dir = robot.getDir();
-        System.out.println("");
+        this.history = robot.getHistory();
         init();
     }
 
     public abstract void init();
 
     public BufferedImage[] loadSpriteID(String targetName){
-        BufferedImage[] sps = robot.getSprites();
-        String[] names = robot.getSpriteNames();
-        List<BufferedImage> targets = new ArrayList<BufferedImage>();
-        for(int i=0;i<names.length;i++){
-            if(names[i].contains(targetName)){
-                targets.add(sps[i]);
-            }
-        }
-        return targets.toArray(new BufferedImage[0]);
+        return robot.loadSpriteID(targetName);
+        // BufferedImage[] sps = robot.getSprites();
+        // String[] names = robot.getSpriteNames();
+        // List<BufferedImage> targets = new ArrayList<BufferedImage>();
+        // for(int i=0;i<names.length;i++){
+        //     if(names[i].contains(targetName)){
+        //         targets.add(sps[i]);
+        //     }
+        // }
+        // return targets.toArray(new BufferedImage[0]);
     }
 
     public String fileName(){
@@ -54,9 +58,9 @@ public abstract class StateA {
     public abstract void update();
 
     public void updateSprite(){
-        frameCount--;
-        if(frameCount<=0){
-            frameCount = gapFrames;
+        frameCount++;
+        if(frameCount>=gapFrames){
+            frameCount = 0;
             spriteIndex++;
             spriteIndex%=sprites.length;
         }
@@ -85,10 +89,13 @@ public abstract class StateA {
 
     public abstract void render(Graphics g);
 
+
+    //
     public void onEntry(){
         frameCount = gapFrames;
         spriteIndex=0;
     }
+    public abstract int id();
 
     //2d physics methods
     public void accel(float x, float y){
@@ -96,45 +103,38 @@ public abstract class StateA {
         vel[1] += y;
     }
     public void steer(float xdir, float ydir, float maxSpeed, float maxAccel){
-        float xSteer = xdir;
-        float ySteer = ydir;
-        if(!isO(xSteer)){
-            if(!isO(ySteer)){
-                //get desired velocities
-                float hyp = hypotenuse(xSteer, ySteer);
-                xSteer = xSteer/hyp*maxSpeed;
-                ySteer = ySteer/hyp*maxSpeed;
-                //get steer vel
-                xSteer-=vel[0];
-                ySteer-=vel[1];
-                //apply accel
-                float steerAccel = hypotenuse(xSteer, ySteer);
-                if(maxAccel<steerAccel){
-                    xSteer = xSteer/steerAccel*maxAccel;
-                    ySteer = ySteer/steerAccel*maxAccel;
-                    accel(xSteer, ySteer);
-                }
-            }else{
-                    xSteer*=maxSpeed;
-                    xSteer-=vel[0];
-                    xSteer/=Math.abs(xSteer);
-                    accel(xSteer*maxAccel,0);
-            }
-        }else if(!isO(ySteer)){
-            if(maxAccel<Math.abs(maxSpeed-Math.abs(vel[1]))){
-                accel(0,ySteer*maxAccel);
-            }
+        float steer[] = {xdir,ydir};
+        //get desired velocities
+        normal(steer);
+        mult(steer,maxSpeed);
+        //get steer vel
+        float dvx = steer[0]-vel[0];
+        float dvy = steer[1]-vel[1];
+        //apply accel
+        if(hypotenuse(dvx, dvy)<maxAccel){
+            //if the differences in vel are small enough
+            //then just set to the desired speed
+            vel[0]=steer[0];
+            vel[1]=steer[1];
+        }else{
+            steer[0]-=vel[0];
+            steer[1]-=vel[1];
+            normal(steer);
+            mult(steer,maxAccel);
+            accel(steer[0],steer[1]);
         }
     }
     public void friction(float percentageRemain){
         if(isO(vel[0])){
-            vel[0] = 0;
+            vel[0] = 0f;
+        }else{
+            vel[0]*=percentageRemain;
         }
         if(isO(vel[1])){
-            vel[1] = 0;
+            vel[1] = 0f;
+        }else{
+            vel[1]*=percentageRemain;
         }
-        vel[0]*=percentageRemain;
-        vel[1]*=percentageRemain;
     }
 
     //math methods
@@ -142,8 +142,19 @@ public abstract class StateA {
         float ratio = (targetMax-targetMin)/(numMax - numMin);
         return (num-numMin)*ratio+targetMin;
     }
+    public void mult(float[] v,float mul){
+        v[0]*=mul;
+        v[1]*=mul;
+    }
     public float hypotenuse(float x, float y){
         return (float)Math.sqrt((x*x+y*y));
+    }
+    public void normal(float[] v){
+        float hyp = hypotenuse(v[0],v[1]);
+        if(hyp != 0){
+            v[0]/=hyp;
+            v[1]/=hyp;
+        }
     }
     public boolean isO(float n){
         return n<.1&&n>-.1;
