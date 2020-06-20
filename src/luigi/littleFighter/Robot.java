@@ -60,7 +60,6 @@ public class Robot extends Sprite{
         //     System.out.println(pos[0]+" "+pos[1]);
         //     System.out.println(vel[0]+" "+vel[1]);
         // }
-        //double click stuff
         
 
 

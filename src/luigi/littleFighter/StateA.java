@@ -39,19 +39,6 @@ public abstract class StateA {
 
     public BufferedImage[] loadSpriteID(String targetName){
         return robot.loadSpriteID(targetName);
-        // BufferedImage[] sps = robot.getSprites();
-        // String[] names = robot.getSpriteNames();
-        // List<BufferedImage> targets = new ArrayList<BufferedImage>();
-        // for(int i=0;i<names.length;i++){
-        //     if(names[i].contains(targetName)){
-        //         targets.add(sps[i]);
-        //     }
-        // }
-        // return targets.toArray(new BufferedImage[0]);
-    }
-
-    public String fileName(){
-        return null;
     }
 
     //update methods

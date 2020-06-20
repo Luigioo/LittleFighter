@@ -27,17 +27,16 @@ public class Game extends AbGame {
         hero = new Robot(this);
         enemies = new ArrayList<Enemy>();
         enemies.add(new Enemy(this));
-        enemies.get(0).test1();
-        enemies.get(0).test();
-        enemies.add(new Enemy(this));
-        enemies.get(1).test();
+
     }
 
     @Override
     public void update() {
         //System.out.println(ap.getValue());
         hero.update();
-
+        for(Enemy e:enemies){
+            e.update();
+        }
         //execute the to-dos
         for(Runnable r:todos){
             r.run();
@@ -50,6 +49,9 @@ public class Game extends AbGame {
         ImageIcon bg = new ImageIcon("res/backgrounds/bg_thv.png");
         g.drawImage(bg.getImage(),0,0,null);
         hero.render(g);
+        for(Enemy e:enemies){
+            e.render(g);
+        }
     }
 
     public void addTask(Runnable r){
