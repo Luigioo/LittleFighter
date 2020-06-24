@@ -9,7 +9,7 @@ import java.awt.Graphics2D;
 
 
 
-public class Robot extends Sprite{
+public class Robot extends Sprite implements Layered{
 
     private Game game;
 
@@ -36,7 +36,7 @@ public class Robot extends Sprite{
         this.pos = new float[2];
         pos[1]=160;
         this.vel = new float[2];
-        this.dir = new float[2];    
+        this.dir = new float[2];
         StateA[] tempS = {
             new StateIdle(this),
             new StateWalk(this),
@@ -68,8 +68,14 @@ public class Robot extends Sprite{
         
     }
 
+    @Override
     public void render(Graphics g){
         state.render(g);
+    }
+    
+    @Override
+    public float getY() {
+        return pos[1];
     }
     
     public void changeState(int stateCode){
@@ -113,5 +119,6 @@ public class Robot extends Sprite{
     public ArrayList<StateA> getHistory(){
         return stateHistory;
     }
+
 
 }

@@ -72,12 +72,17 @@ public class StateDash extends StateA{
 
         //determine dash direction
         updateDir();
-        if(robot.isMirror){
-            dashx = -2;
+        if((dir[0]+dir[1])==0){
+            if(robot.isMirror){
+                dashx = -2;
+            }else{
+                dashx = 2;
+            }
+            dashy = 0;
         }else{
-            dashx = 2;
+            dashx=dir[0];
+            dashy=dir[1];
         }
-        dashy = dir[1];
     }
     public int id(){
         return id;
