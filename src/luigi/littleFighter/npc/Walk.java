@@ -1,6 +1,8 @@
 package luigi.littleFighter.npc;
 
-public class Walk extends State{
+import luigi.littleFighter.collide.Collidable;
+
+public class Walk extends State {
     
     protected static final int ID = 1;
 
@@ -16,12 +18,17 @@ public class Walk extends State{
     public void update(){
         updateSprite();
         updateRelativePos();
-        steer(relPos[0],relPos[1],WALKSPEED,MAXACCEL);
+        //steer(relPos[0],relPos[1],WALKSPEED,MAXACCEL);
         updateFace();
         updatePos();
         if(hypotenuse(relPos[0], relPos[1])>150){
             changeState(Idle.ID);
         }
+    }
+
+    public void onCollide(Collidable c){
+        super.onCollide(c);
+        changeState(Hurt.ID);
     }
 
 }

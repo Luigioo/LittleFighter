@@ -1,5 +1,5 @@
 
-package luigi.littleFighter;
+package luigi.littleFighter.player;
 
 import java.awt.event.KeyEvent;
 import java.awt.Graphics;
@@ -33,10 +33,11 @@ public class StateRun extends StateA {
         updateDir();
 
         //update robot state
-        if(dir[0]==0){
+        if(dir[0]==0||dir[0]!=dirX){
             robot.changeState(StateIdle.id);
             return;
         }
+
         if(input.keyPressed(KeyEvent.VK_K)){
             robot.changeState(StateDash.id);
             return;

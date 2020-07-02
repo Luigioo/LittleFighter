@@ -1,7 +1,8 @@
 package luigi.littleFighter.npc;
 
 // import luigi.littleFighter.Game;
-import luigi.littleFighter.Robot;
+import luigi.littleFighter.player.Robot;
+import luigi.littleFighter.collide.*;
 
 import java.awt.image.*;
 import java.awt.Graphics;
@@ -14,12 +15,15 @@ public abstract class State {
     protected float[] pos;
     protected float[] relPos;
     protected float[] vel;
+    protected Hurtbox hb;
+    protected int[] health;
 
 
     protected BufferedImage[] sprites;
     protected int gapFrames = 10;
     protected int frameCount = 0;
     protected int spriteIndex = 0;
+    protected boolean shouldExit = false;
 
     public State(Enemy master){
         this.master = master;
@@ -28,6 +32,8 @@ public abstract class State {
         pos=master.getPos();
         relPos=master.getRelPos();
         vel=master.getVel();
+        hb=master;
+        health = master.getHealth();
     }
 
     public void update(){}
@@ -47,6 +53,7 @@ public abstract class State {
         if(frameCount>=gapFrames){
             frameCount = 0;
             spriteIndex++;
+            if(spriteIndex==sprites.length){shouldExit = true;}
             spriteIndex%=sprites.length;
         }
     }
@@ -73,9 +80,22 @@ public abstract class State {
     public void onEntry(){
         frameCount = gapFrames;
         spriteIndex = 0;
+        shouldExit = false;
     }
 
-    //wrappers
+    public void onCollide(Collidable c){
+        if(c instanceof Hitbox){
+            Hitbox hi = (Hitbox)c;
+            takeDamage(hi.getDamage());
+        }
+        System.out.println("enemyhealth: "+health[0]);
+    }
+
+    public void takeDamage(int d){
+        health[0] = Math.max(health[0]-d,0);
+    }
+
+//#region wrappers
     public boolean isMirror(){return master.isMirror();}
     public void faceRight(){master.faceRight();}
     public void faceLeft(){master.faceLeft();}
@@ -86,8 +106,7 @@ public abstract class State {
     public void changeState(int stateID){
         master.changeState(stateID);
     }
-
-
+//#endregion
     
 //#region math&physics
 

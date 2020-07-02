@@ -1,7 +1,9 @@
 package luigi.littleFighter;
 
 import luigi.engine.*;
+import luigi.littleFighter.collide.*;
 import luigi.littleFighter.npc.Enemy;
+import luigi.littleFighter.player.Robot;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -14,7 +16,7 @@ import javax.swing.*;
 
 public class Game extends AbGame implements Comparator<Layered>{
 
-    private ArrayList<Runnable> todos;
+    private List<Runnable> todos;
 
     private AdjustPanel ap;
     
@@ -22,6 +24,9 @@ public class Game extends AbGame implements Comparator<Layered>{
     private ArrayList<Enemy> enemies;
 
     private List<Layered> layeredRenders;
+
+    private List<Hurtbox> hurts;
+    private List<Hitbox> hits;
 
     @Override
     public void setup() {
@@ -39,7 +44,13 @@ public class Game extends AbGame implements Comparator<Layered>{
 
         layeredRenders = new ArrayList<Layered>();
         layeredRenders.add(hero);
-        for(Enemy e:enemies){addLayeredRenders(e);}
+        hurts = new ArrayList<Hurtbox>();
+        hits = new ArrayList<Hitbox>();
+
+        for(Enemy e:enemies){
+            addLayeredRenders(e);
+            hurts.add(e);
+        }
 
     }
 
@@ -50,6 +61,24 @@ public class Game extends AbGame implements Comparator<Layered>{
         for(Enemy e:enemies){
             e.update();
         }
+        //update collision
+        for(Hitbox hi:hits){
+            for(Hurtbox hu:hurts){
+                boolean alreadyHurt = false;
+                for(Hurtbox hurted:hi.getHurts()){
+                    if(hu==hurted){
+                        alreadyHurt = true;
+                    }
+                }
+                if(!alreadyHurt&&hu.collideWith(hi)){
+                    hu.onCollide(hi);
+                    hi.onCollide(hu);
+                }
+            }
+        }
+        //
+
+
         //execute the to-dos
         for(Runnable r:todos){
             r.run();
@@ -67,17 +96,13 @@ public class Game extends AbGame implements Comparator<Layered>{
         }
     }
 
-    public void addTask(Runnable r){
-        todos.add(r);
-    }
 
-    public void addLayeredRenders(Layered l){
-        layeredRenders.add(l);
-    }
+    public void addTask(Runnable r){todos.add(r);}
+    public void addLayeredRenders(Layered l){layeredRenders.add(l);}
+    public void addHitBox(Hitbox h){hits.add(h);}
+    public void removeHitBox(Hitbox h){hits.remove(h);}
 
-    public Robot getHero(){
-        return hero;
-    }
+    public Robot getHero(){return hero;}
 
     public static void main(String args[]){
         Game game = new Game();

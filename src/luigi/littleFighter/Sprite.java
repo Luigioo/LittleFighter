@@ -58,6 +58,15 @@ public class Sprite {
         }
         return targets.toArray(new BufferedImage[0]);
     }
+    public BufferedImage getSpritebyName(String name){
+        for(int i=0;i<spriteNames.length;i++){
+            if(spriteNames[i].contains(name)){
+                return sprites[i];
+            }
+        }
+        System.out.println("!!!!cannot find sprite: "+name);
+        return null;
+    }
 
     private String[] getResourceFiles(String path){
         List<String> filenames = new ArrayList<String>();

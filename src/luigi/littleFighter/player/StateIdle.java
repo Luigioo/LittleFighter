@@ -1,4 +1,4 @@
-package luigi.littleFighter;
+package luigi.littleFighter.player;
 
 import java.awt.event.KeyEvent;
 import java.awt.Graphics;
@@ -27,9 +27,7 @@ public class StateIdle extends StateA{
     public void update(){
         
         updateSprite();
-        
         updateDir();
-
         steer(0,0,100,0.5f);
 
         //update robot state
@@ -40,6 +38,10 @@ public class StateIdle extends StateA{
         }
         if(input.keyPressed(KeyEvent.VK_J)){
             robot.changeState(StatePunch.id);
+            return;
+        }
+        if(input.keyPressed(KeyEvent.VK_I)){
+            robot.changeState(Qione.id);
             return;
         }
         

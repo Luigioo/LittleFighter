@@ -1,6 +1,8 @@
-package luigi.littleFighter;
+package luigi.littleFighter.player;
 
 import luigi.engine.Input;
+import luigi.littleFighter.*;
+import luigi.littleFighter.collide.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,9 @@ public abstract class StateA {
     protected int gapFrames = 10;
     protected int frameCount = 0;
     protected int spriteIndex = 0;
+    protected int[] durations;
 
+    protected Game game;
     protected Robot robot;
     protected Input input;
     protected float[] pos;
@@ -22,10 +26,11 @@ public abstract class StateA {
     protected ArrayList<StateA> history;
     
     protected BufferedImage[] sprites;
-
+    protected boolean shouldExit = false;
 
 
     public StateA(Robot robot){
+        this.game = robot.getGame();
         this.robot = robot;
         this.input = robot.getInput();
         this.pos = robot.getPos();
@@ -37,10 +42,8 @@ public abstract class StateA {
 
     public abstract void init();
 
-    public BufferedImage[] loadSpriteID(String targetName){
-        return robot.loadSpriteID(targetName);
-    }
-
+    public BufferedImage[] loadSpriteID(String targetName){return robot.loadSpriteID(targetName);}
+    public BufferedImage getSpritebyName(String name){return robot.getSpritebyName(name);}
     //update methods
     public abstract void update();
 
@@ -49,6 +52,16 @@ public abstract class StateA {
         if(frameCount>=gapFrames){
             frameCount = 0;
             spriteIndex++;
+            if(spriteIndex == sprites.length){shouldExit=true;}
+            spriteIndex%=sprites.length;
+        }
+    }
+    public void upSpriteDuration(){
+        frameCount++;
+        if(frameCount>=durations[spriteIndex]){
+            frameCount = 0;
+            spriteIndex++;
+            if(spriteIndex == sprites.length){shouldExit=true;}
             spriteIndex%=sprites.length;
         }
     }
@@ -73,17 +86,48 @@ public abstract class StateA {
         pos[0]+=vel[0];
         pos[1]+=vel[1];
     }
-
-    public abstract void render(Graphics g);
-
-
     //
+
+    public void render(Graphics g){
+        BufferedImage image = sprites[spriteIndex];
+        if(robot.isMirror){
+            g.drawImage(image, (int)pos[0]+image.getWidth(), (int)pos[1], -image.getWidth(), image.getHeight(), null);
+        }else{
+            g.drawImage(image, (int)pos[0],(int)pos[1],image.getWidth(),image.getHeight(),null);
+        }
+    }
+
+    /**
+     * contains code, so do super();
+     */
     public void onEntry(){
-        frameCount = gapFrames;
+        frameCount = 0;
         spriteIndex=0;
+        shouldExit = false;
+    }
+    public void onExit(){
+
     }
     public abstract int id();
 
+    public Hitbox createHitBox(int offx,int offy,int colWidth,int colHeight){
+        Hitbox r = new Hitbox(){
+            public int[] getCords() {
+                int[] r = {(int)pos[0]+offx,
+                    (int)pos[1]+offy,
+                    colWidth,
+                    colHeight};
+                return r;
+            }
+        };
+        game.addHitBox(r);
+        return r;
+    }
+    public void removeHitBox(Hitbox hb){
+        game.removeHitBox(hb);
+    }
+
+//#region maths &physics
     //2d physics methods
     public void accel(float x, float y){
         vel[0] += x;
@@ -146,4 +190,6 @@ public abstract class StateA {
     public boolean isO(float n){
         return n<.1&&n>-.1;
     }
+//#endregion
+
 }

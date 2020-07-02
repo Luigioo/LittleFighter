@@ -1,7 +1,7 @@
-package luigi.littleFighter;
+package luigi.littleFighter.player;
 
 import luigi.engine.Input;
-
+import luigi.littleFighter.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.awt.Graphics;
@@ -12,7 +12,6 @@ import java.awt.Graphics2D;
 public class Robot extends Sprite implements Layered{
 
     private Game game;
-
     private Input input;
 
     private float[] pos;
@@ -29,7 +28,7 @@ public class Robot extends Sprite implements Layered{
     
     public Robot(Game g) {
         //super("res\\bandit.png", "res\\bandit_0_mirror.png");
-        super("res/bandit");
+        super("res/davis");
         // new Sprite("bandit");
         this.game = g;
         this.input = g.getInput();
@@ -43,7 +42,10 @@ public class Robot extends Sprite implements Layered{
             null,
             new StatePunch(this),
             new StateDash(this),
-            new StateRun(this)
+            new StateRun(this),
+            new Punchtwo(this),
+            new Qione(this),
+            new Qitwo(this)
         };
         states = tempS;
         state = states[StateIdle.id];
@@ -61,8 +63,6 @@ public class Robot extends Sprite implements Layered{
         //     System.out.println(vel[0]+" "+vel[1]);
         // }
         
-
-
         //update everything else
         state.update();
         
@@ -81,6 +81,7 @@ public class Robot extends Sprite implements Layered{
     public void changeState(int stateCode){
         game.addTask(new Runnable(){
             public void run(){
+                state.onExit();
                 stateHistory.add(state);
                 state = states[stateCode];
                 state.onEntry();
@@ -95,30 +96,15 @@ public class Robot extends Sprite implements Layered{
         }
     }
     
-    public void faceRight(){
-        isMirror = false;
-    }
-    public void faceLeft(){
-        isMirror = true;
-    }
+    public void faceRight(){isMirror = false;}
+    public void faceLeft(){isMirror = true;}
     
-    public Input getInput(){
-        return input;
-    }
-
-    public float[] getPos(){
-        return pos;
-    }
-    public float[] getVel(){
-        return vel;
-    }
-    public float[] getDir(){
-        return dir;
-    }
-
-    public ArrayList<StateA> getHistory(){
-        return stateHistory;
-    }
+    public Game getGame(){return game;}
+    public Input getInput(){return input;}
+    public float[] getPos(){return pos;}
+    public float[] getVel(){return vel;}
+    public float[] getDir(){return dir;}
+    public ArrayList<StateA> getHistory(){return stateHistory;}
 
 
 }

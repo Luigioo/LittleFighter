@@ -1,6 +1,8 @@
 package luigi.littleFighter.npc;
 
-public class Idle extends State{
+import luigi.littleFighter.collide.Collidable;
+
+public class Idle extends State {
 
     protected static final int ID = 0;
 
@@ -22,4 +24,8 @@ public class Idle extends State{
         updatePos();
     }
     
+    public void onCollide(Collidable c){
+        super.onCollide(c);
+        changeState(Hurt.ID);
+    }
 }

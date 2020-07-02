@@ -1,4 +1,4 @@
-package luigi.littleFighter;
+package luigi.littleFighter.player;
 
 import java.awt.event.KeyEvent;
 import java.awt.Graphics;
@@ -33,9 +33,12 @@ public class StateWalk extends StateA {
             robot.changeState(StateDash.id);
             return;
         }
-
         if (input.keyPressed(KeyEvent.VK_J)) {
             robot.changeState(StatePunch.id);
+            return;
+        }
+        if(input.keyPressed(KeyEvent.VK_I)){
+            robot.changeState(Qione.id);
             return;
         }
         if (dir[0] == 0) {

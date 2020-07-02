@@ -81,13 +81,13 @@ public class GameThread extends JPanel implements Runnable{
                 abGame.update();
 				input.update();
                 //print fps
-				if(fpsTime >= 1)
-				{
-					fpsTime = 0;
-					fps = frames;
-					frames = 0;
-					System.out.println(fps);
-				}
+				// if(fpsTime >= 1)
+				// {
+				// 	fpsTime = 0;
+				// 	fps = frames;
+				// 	frames = 0;
+				// 	System.out.println(fps);
+				// }
 			}
 			
 			if(render)

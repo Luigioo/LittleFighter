@@ -15,7 +15,7 @@ public class Load {
 
     public static void main(String[] args) throws Exception {
 
-        File in = new File("res\\bandit_0_mirror.bmp");
+        File in = new File("res\\davis_2.bmp");
         BufferedImage source = ImageIO.read(in);
 
         int color = source.getRGB(0, 0);
@@ -24,7 +24,7 @@ public class Load {
 
         BufferedImage transparent = imageToBufferedImage(image);
 
-        File out = new File("res\\bandit_0_mirror.png");
+        File out = new File("res\\davis_2.png");
         ImageIO.write(transparent, "PNG", out);
     }
 

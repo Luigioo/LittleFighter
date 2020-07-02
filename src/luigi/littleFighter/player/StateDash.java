@@ -1,4 +1,4 @@
-package luigi.littleFighter;
+package luigi.littleFighter.player;
 
 import java.awt.event.KeyEvent;
 import java.awt.Graphics;
@@ -10,8 +10,8 @@ public class StateDash extends StateA{
     
     public static final int id = 4;
 
-    private final float DASHSPEED = 6f;
-    private final float MAXACCEL = 0.4f;
+    private final float DASHSPEED = 5f;
+    private final float MAXACCEL = 0.3f;
     
     private float dashx;
     private float dashy;
@@ -81,7 +81,7 @@ public class StateDash extends StateA{
             dashy = 0;
         }else{
             dashx=dir[0];
-            dashy=dir[1];
+            dashy=dir[1]/2;
         }
     }
     public int id(){
